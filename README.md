@@ -1,6 +1,10 @@
-# todolist
+# Chat App
 
-A new Flutter project.
+Flutter app project to practise with Flutter and Firebase.
+
+- Create a user and Login in the application
+- Search other users
+- Send messages to another accounts
 
 ## Getting Started
 
