@@ -6,6 +6,10 @@ Flutter app project to practise with Flutter and Firebase.
 - Search other users
 - Send messages to another accounts
 
+## Links
+
+- Follow [this](https://www.youtube.com/watch?v=FTju8w4zEno) tutorial to create this application
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
