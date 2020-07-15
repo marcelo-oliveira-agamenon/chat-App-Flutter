@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todolist/services/auth.dart';
 import 'package:todolist/widgets/widgets.dart';
 import 'package:todolist/views/chatRooms.dart';
+import 'package:todolist/services/database.dart';
 
 class SignUp extends StatefulWidget {
   final Function toggle;
@@ -15,24 +16,29 @@ class _SignUpState extends State<SignUp> {
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
   AuthMethods authMethods = new AuthMethods();
+  DatabaseMethods databaseMethods = new DatabaseMethods();
   TextEditingController userNameText = new TextEditingController();
   TextEditingController emailText = new TextEditingController();
   TextEditingController passwordText = new TextEditingController();
 
   signInUpFunc() {
     if (formKey.currentState.validate()) {
+      Map<String, String> usermapInfo = {
+        "name": userNameText.text,
+        "email": emailText.text
+      };
       setState(() {
         isLoading = true;
       });
+      authMethods.signUp(emailText.text, passwordText.text).then((value) {
+        databaseMethods.uploadUserInfo(usermapInfo);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatRoom(),
+            ));
+      });
     }
-
-    authMethods.signUp(emailText.text, passwordText.text).then((value) {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatRoom(),
-          ));
-    });
   }
 
   @override
