@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/helper/helperFuncions.dart';
 import 'package:todolist/services/auth.dart';
 import 'package:todolist/widgets/widgets.dart';
 import 'package:todolist/views/chatRooms.dart';
@@ -17,6 +18,7 @@ class _SignUpState extends State<SignUp> {
   bool isLoading = false;
   AuthMethods authMethods = new AuthMethods();
   DatabaseMethods databaseMethods = new DatabaseMethods();
+
   TextEditingController userNameText = new TextEditingController();
   TextEditingController emailText = new TextEditingController();
   TextEditingController passwordText = new TextEditingController();
@@ -27,11 +29,14 @@ class _SignUpState extends State<SignUp> {
         "name": userNameText.text,
         "email": emailText.text
       };
+      HelperFuncions.saveUsername(userNameText.text);
+      HelperFuncions.saveEmail(emailText.text);
       setState(() {
         isLoading = true;
       });
       authMethods.signUp(emailText.text, passwordText.text).then((value) {
         databaseMethods.uploadUserInfo(usermapInfo);
+        HelperFuncions.saveUserLoggedIn(true);
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(

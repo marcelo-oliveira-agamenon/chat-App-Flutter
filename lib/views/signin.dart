@@ -1,4 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:todolist/helper/helperFuncions.dart';
+import 'package:todolist/services/auth.dart';
+import 'package:todolist/services/database.dart';
+import 'package:todolist/views/chatRooms.dart';
 import 'package:todolist/widgets/widgets.dart';
 
 class SignIn extends StatefulWidget {
@@ -10,6 +15,39 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  final formKey = GlobalKey<FormState>();
+  AuthMethods authMethods = new AuthMethods();
+  DatabaseMethods databaseMethods = new DatabaseMethods();
+  TextEditingController emailText = new TextEditingController();
+  TextEditingController passwordText = new TextEditingController();
+  bool isLoading = false;
+  QuerySnapshot querySnap;
+
+  signin() {
+    if (formKey.currentState.validate()) {
+      HelperFuncions.saveEmail(emailText.text);
+      databaseMethods.getUserByUserEmail(emailText.text).then((value) {
+        querySnap = value;
+        HelperFuncions.saveEmail(querySnap.documents[0].data["name"]);
+      });
+
+      setState(() {
+        isLoading = true;
+      });
+
+      authMethods.signIn(emailText.text, passwordText.text).then((value) {
+        if (value != null) {
+          HelperFuncions.saveUserLoggedIn(true);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatRoom(),
+              ));
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,14 +63,33 @@ class _SignInState extends State<SignIn> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                TextField(
-                  style: simpleTextFieldStyle(),
-                  decoration: textFieldInputDecoration("Email"),
-                ),
-                TextField(
-                  style: simpleTextFieldStyle(),
-                  decoration: textFieldInputDecoration("Password"),
-                  obscureText: true,
+                Form(
+                  key: formKey,
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (value) {
+                          return value.isEmpty || !value.contains("@")
+                              ? "Error in email field"
+                              : null;
+                        },
+                        controller: emailText,
+                        style: simpleTextFieldStyle(),
+                        decoration: textFieldInputDecoration("Email"),
+                      ),
+                      TextFormField(
+                        validator: (value) {
+                          return value.isEmpty || value.length < 6
+                              ? "Error in password field"
+                              : null;
+                        },
+                        obscureText: true,
+                        controller: passwordText,
+                        style: simpleTextFieldStyle(),
+                        decoration: textFieldInputDecoration("Password"),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 8,
@@ -53,22 +110,27 @@ class _SignInState extends State<SignIn> {
                 SizedBox(
                   height: 16,
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 20,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    gradient: LinearGradient(colors: [
-                      const Color(0xff007EF4),
-                      const Color(0xff2A75BC),
-                    ]),
-                  ),
-                  child: Text(
-                    "Sign In",
-                    style: mediumTextFieldStyle(),
+                GestureDetector(
+                  onTap: () {
+                    signin();
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 20,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: LinearGradient(colors: [
+                        const Color(0xff007EF4),
+                        const Color(0xff2A75BC),
+                      ]),
+                    ),
+                    child: Text(
+                      "Sign In",
+                      style: mediumTextFieldStyle(),
+                    ),
                   ),
                 ),
                 SizedBox(
