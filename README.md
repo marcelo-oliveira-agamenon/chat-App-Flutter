@@ -6,6 +6,14 @@ Flutter app project to practise with Flutter and Firebase.
 - Search other users
 - Send messages to another accounts
 
+#### Commands
+
+To install:
+`flutter pub get`
+
+To run the app:
+`flutter run`
+
 ## Links
 
 - Follow [this](https://www.youtube.com/watch?v=FTju8w4zEno) tutorial to create this application
