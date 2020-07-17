@@ -28,7 +28,7 @@ class _SignInState extends State<SignIn> {
       HelperFuncions.saveEmail(emailText.text);
       databaseMethods.getUserByUserEmail(emailText.text).then((value) {
         querySnap = value;
-        HelperFuncions.saveEmail(querySnap.documents[0].data["name"]);
+        HelperFuncions.saveUsername(querySnap.documents[0].data["name"]);
       });
 
       setState(() {

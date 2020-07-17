@@ -25,4 +25,28 @@ class DatabaseMethods {
         .document(chatRoomId)
         .setData(chatRoomMap);
   }
+
+  addConversationsMessages(String chatRoomId, messageMap) {
+    Firestore.instance
+        .collection("conversations")
+        .document(chatRoomId)
+        .collection("listChats")
+        .add(messageMap);
+  }
+
+  getConversationsMessages(String chatRoomId) async {
+    return await Firestore.instance
+        .collection("conversations")
+        .document(chatRoomId)
+        .collection("listChats")
+        .orderBy("time", descending: false)
+        .snapshots();
+  }
+
+  getChatRooms(String username) async {
+    return await Firestore.instance
+        .collection("conversations")
+        .where("users", arrayContains: username)
+        .snapshots();
+  }
 }
